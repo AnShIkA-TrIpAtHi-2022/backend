@@ -1,220 +1,108 @@
-### Project Structure
+# Rapid Aid Connect Backend
 
-```
-/backend
-│
-├── /config
-│   └── db.js               # Database connection configuration
-│
-├── /controllers
-│   └── userController.js   # Example controller for user-related operations
-│
-├── /models
-│   └── User.js             # Example User model
-│
-├── /routes
-│   └── userRoutes.js       # Example routes for user-related endpoints
-│
-├── /middleware
-│   └── authMiddleware.js    # Example middleware for authentication
-│
-├── /utils
-│   └── logger.js           # Utility functions (e.g., logging)
-│
-├── /tests
-│   └── user.test.js        # Example test file for user-related tests
-│
-├── .env                    # Environment variables
-├── .gitignore              # Git ignore file
-├── package.json            # NPM package file
-├── server.js               # Main entry point for the application
-└── README.md               # Project documentation
-```
+This is the backend API for the Rapid Aid Connect disaster response application, built with Node.js, Express, and MongoDB.
 
-### File Contents
+## Features
 
-Here are some basic contents for the key files:
+- User authentication and role-based access control (donors, volunteers, responders)
+- SOS emergency request management
+- Base camp and resource management 
+- Donation tracking and fulfillment
+- Geospatial queries for nearby emergency requests and base camps
 
-1. **`package.json`**: Initialize your project with `npm init -y` and install the required packages.
+## Setup
 
-   ```json
-   {
-     "name": "backend",
-     "version": "1.0.0",
-     "description": "Backend for the application",
-     "main": "server.js",
-     "scripts": {
-       "start": "node server.js",
-       "test": "jest"
-     },
-     "dependencies": {
-       "express": "^4.17.1",
-       "mongoose": "^5.10.9",
-       "dotenv": "^8.2.0",
-       "body-parser": "^1.19.0"
-     },
-     "devDependencies": {
-       "jest": "^26.6.0"
-     },
-     "author": "",
-     "license": "ISC"
-   }
+1. Install dependencies:
+   ```
+   npm install
    ```
 
-2. **`server.js`**: Main entry point for your application.
-
-   ```javascript
-   const express = require('express');
-   const mongoose = require('mongoose');
-   const bodyParser = require('body-parser');
-   const dotenv = require('dotenv');
-   const userRoutes = require('./routes/userRoutes');
-
-   dotenv.config();
-
-   const app = express();
-   const PORT = process.env.PORT || 5000;
-
-   // Middleware
-   app.use(bodyParser.json());
-   app.use('/api/users', userRoutes);
-
-   // Database connection
-   mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-     .then(() => console.log('MongoDB connected'))
-     .catch(err => console.log(err));
-
-   app.listen(PORT, () => {
-     console.log(`Server is running on port ${PORT}`);
-   });
+2. Set up environment variables:
+   Create a `.env` file in the root directory with the following variables:
    ```
-
-3. **`/config/db.js`**: Database connection configuration.
-
-   ```javascript
-   const mongoose = require('mongoose');
-   const dotenv = require('dotenv');
-
-   dotenv.config();
-
-   const connectDB = async () => {
-     try {
-       await mongoose.connect(process.env.MONGODB_URI, {
-         useNewUrlParser: true,
-         useUnifiedTopology: true,
-       });
-       console.log('MongoDB connected');
-     } catch (error) {
-       console.error('MongoDB connection error:', error);
-       process.exit(1);
-     }
-   };
-
-   module.exports = connectDB;
-   ```
-
-4. **`/models/User.js`**: Example User model.
-
-   ```javascript
-   const mongoose = require('mongoose');
-
-   const UserSchema = new mongoose.Schema({
-     name: {
-       type: String,
-       required: true,
-     },
-     email: {
-       type: String,
-       required: true,
-       unique: true,
-     },
-     password: {
-       type: String,
-       required: true,
-     },
-   });
-
-   module.exports = mongoose.model('User', UserSchema);
-   ```
-
-5. **`/routes/userRoutes.js`**: Example routes for user-related endpoints.
-
-   ```javascript
-   const express = require('express');
-   const router = express.Router();
-   const userController = require('../controllers/userController');
-
-   // Define user routes
-   router.post('/', userController.createUser);
-   router.get('/', userController.getAllUsers);
-
-   module.exports = router;
-   ```
-
-6. **`/controllers/userController.js`**: Example controller for user-related operations.
-
-   ```javascript
-   const User = require('../models/User');
-
-   exports.createUser = async (req, res) => {
-     try {
-       const user = new User(req.body);
-       await user.save();
-       res.status(201).json(user);
-     } catch (error) {
-       res.status(400).json({ message: error.message });
-     }
-   };
-
-   exports.getAllUsers = async (req, res) => {
-     try {
-       const users = await User.find();
-       res.status(200).json(users);
-     } catch (error) {
-       res.status(500).json({ message: error.message });
-     }
-   };
-   ```
-
-7. **`.env`**: Environment variables.
-
-   ```
-   MONGODB_URI=mongodb://localhost:27017/yourdbname
    PORT=5000
+   MONGO_URI=mongodb://localhost:27017/rapid-aid-connect
+   JWT_SECRET=your_jwt_secret_key
+   JWT_EXPIRE=30d
+   NODE_ENV=development
    ```
 
-8. **`.gitignore`**: Ignore node_modules and environment files.
-
+3. Run the server:
    ```
-   node_modules
-   .env
-   ```
-
-9. **`README.md`**: Basic documentation for your project.
-
-   ```markdown
-   # Backend
-
-   This is the backend for the application using Node.js, Express, and MongoDB.
-
-   ## Installation
-
-   1. Clone the repository.
-   2. Run `npm install` to install dependencies.
-   3. Create a `.env` file and add your MongoDB URI.
-   4. Run `npm start` to start the server.
-
-   ## API Endpoints
-
-   - `POST /api/users` - Create a new user
-   - `GET /api/users` - Get all users
+   # Development mode
+   npm run dev
+   
+   # Production mode
+   npm start
    ```
 
-### Running the Application
+## API Endpoints
 
-1. Make sure you have MongoDB installed and running.
-2. Create a `.env` file in the root of your project and add your MongoDB connection string.
-3. Run `npm install` to install the dependencies.
-4. Start the server with `npm start`.
+### Authentication
+- `POST /api/auth/register` - Register a new user
+- `POST /api/auth/login` - User login
+- `GET /api/auth/me` - Get current user profile
+- `PUT /api/auth/updateprofile` - Update user profile
 
-This boilerplate provides a basic structure for your Node.js backend. You can expand upon it by adding more models, controllers, routes, and middleware as needed for your application.
+### SOS Requests
+- `GET /api/sos` - Get all SOS requests (filtered by role)
+- `POST /api/sos` - Create a new SOS request
+- `GET /api/sos/:id` - Get a specific SOS request
+- `PUT /api/sos/:id` - Update a SOS request
+- `DELETE /api/sos/:id` - Delete a SOS request
+- `GET /api/sos/radius/:longitude/:latitude/:distance` - Get nearby SOS requests
+
+### Base Camps
+- `GET /api/basecamps` - Get all base camps
+- `POST /api/basecamps` - Create a new base camp (responders only)
+- `GET /api/basecamps/:id` - Get a specific base camp
+- `PUT /api/basecamps/:id` - Update a base camp (responders only)
+- `DELETE /api/basecamps/:id` - Delete a base camp (responders only)
+- `PUT /api/basecamps/:id/resources` - Update resources in a base camp
+- `PUT /api/basecamps/:id/volunteers` - Assign volunteer to a base camp
+- `DELETE /api/basecamps/:id/volunteers/:volunteerId` - Remove volunteer from a base camp
+- `GET /api/basecamps/radius/:longitude/:latitude/:distance` - Get nearby base camps
+
+### Donations
+- `GET /api/donations` - Get all donations (filtered by role)
+- `POST /api/donations` - Create a new donation
+- `GET /api/donations/:id` - Get a specific donation
+- `PUT /api/donations/:id` - Update a donation status
+- `DELETE /api/donations/:id` - Delete a donation (pending donations only)
+- `GET /api/basecamps/:id/donations` - Get all donations for a specific base camp
+
+## Models
+
+### User
+- `name`: String (required)
+- `email`: String (required, unique)
+- `password`: String (required, min length 6)
+- `role`: String (donor, volunteer, responder)
+- `location`: GeoJSON Point
+
+### SOSRequest
+- `user`: Reference to User
+- `emergency`: String (Medical, Trapped, Supplies, Evacuation, Other)
+- `description`: String
+- `location`: GeoJSON Point
+- `status`: String (pending, assigned, resolved)
+- `assignedTo`: Reference to User
+- `createdAt`: Date
+- `resolvedAt`: Date
+
+### BaseCamp
+- `name`: String (required, unique)
+- `location`: GeoJSON Point
+- `capacity`: Number
+- `occupancy`: Number
+- `resources`: Array of Resources
+- `volunteers`: Array of References to Users
+
+### Donation
+- `donor`: Reference to User
+- `resources`: Array of Resources
+- `baseCamp`: Reference to BaseCamp
+- `status`: String (pending, in-transit, delivered, cancelled)
+- `scheduledDate`: Date
+- `deliveredDate`: Date
+- `createdAt`: Date
