@@ -1,0 +1,28 @@
+/backend
+│
+├── /config
+│   ├── db.js               # Database connection configuration
+│
+├── /controllers
+│   ├── userController.js   # Example controller for user-related operations
+│
+├── /models
+│   ├── User.js             # Example User model
+│
+├── /routes
+│   ├── userRoutes.js       # Routes for user-related endpoints
+│
+├── /middleware
+│   ├── authMiddleware.js    # Example middleware for authentication
+│
+├── /utils
+│   ├── logger.js           # Utility for logging
+│
+├── /tests
+│   ├── user.test.js        # Example test file for user-related functionality
+│
+├── .env                    # Environment variables
+├── .gitignore              # Git ignore file
+├── package.json            # NPM package file
+├── server.js               # Main server file
+└── README.md               # Project documentation
